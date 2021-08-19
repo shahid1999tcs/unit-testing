@@ -1,7 +1,12 @@
 package com.in28minutes.unittesting.unittesting.business;
 
+import org.junit.jupiter.api.Test;
+import static org.hamcrest.MatcherAssert.assertThat; 
+import static org.hamcrest.Matchers.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -25,10 +30,22 @@ class ItemBusinessServiceTest {
 	ItemBusinessService business;
 	
 	@Test
-	void testSaveItem() {
-		when(repo.save(new Item(2, "item2", 20, 20))).thenReturn(new Item(2, "item2", 20, 20));
-		Item item2 = business.saveItem(new Item(2, "item2", 20, 20));
-		assertEquals(2,item2.getId());
+	void testSaveItem() throws ParameterMissingException {
+		Item item1 = new Item(2, "item2", 20, 20);
+		when(repo.save(item1)).thenReturn(item1);
+		Item item2 = business.saveItem(item1);
+		assertEquals(item1.getName(),item2.getName());
+	}
+	
+	@Test
+	void testSaveItemWhenNameIsNull() {
+		
+		try {
+			Item item = business.saveItem(new Item(2, null, 20, 20));
+		} catch (Exception e) {
+			assertNotNull(e);
+			assertEquals(ParameterMissingException.class, e.getClass());
+		}
 	}
 
 	@Test
@@ -36,8 +53,15 @@ class ItemBusinessServiceTest {
 		ItemBusinessService bussinessService = new ItemBusinessService();
 		Item item = bussinessService.retreiveHardcodedItem();
 		assertNotNull(item);
-		assertEquals(new Item(1, "Ball", 10, 100), item);
+		assertEquals(1, item.getId());
 		
+	}
+	
+	@Test
+	void testEquals() {
+		Buscuit buscuit = new Buscuit("Oreo",2);
+		Buscuit buscuit2 = new Buscuit("Oreo",2);
+		assertThat(buscuit, equalTo(buscuit2));
 	}
 
 	@Test

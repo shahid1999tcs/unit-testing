@@ -32,8 +32,14 @@ public class ItemBusinessService {
 		return items;	
 	}
 
-	public Item saveItem(Item item) {
-		return repository.save(item);
+	public Item saveItem(Item item) throws ParameterMissingException {
+		if(item.getName()==null) {
+			throw new ParameterMissingException("Name is missing");
+		}
+		else {
+			return repository.save(item);
+		}
+		
 	}
 	
 }
